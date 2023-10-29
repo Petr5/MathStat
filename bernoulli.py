@@ -37,28 +37,43 @@ def generate_bernoulli(theta, size):
 sample_sizes = [5, 10, 100, 200, 400, 600, 800, 1000]
 samples_bernoulli = dict()
 samples_laplace = dict()
-theta = 0.8
+theta_bernoulli = 0.8
 size = 10
-print(generate_bernoulli(theta, size))
+print(generate_bernoulli(theta_bernoulli, size))
 # Генерация выборок
-for n in sample_sizes:
-    sample_bernoulli = generate_bernoulli(theta, n)
-    print(n)
+import numpy as np
+import matplotlib.pyplot as plt
+
+def generate_laplace_sample(theta_bernoulli, size):
+    # Generate Laplace-distributed samples
+    samples = np.random.laplace(scale=theta_bernoulli, size=size)
+    return samples
+
+theta_laplace = 2.0  # The scale parameter of the Laplace distribution
+
+
+
+for sample_size in sample_sizes:
+    sample_bernoulli = generate_bernoulli(theta_bernoulli, sample_size)
+    print(sample_size)
     print(sample_bernoulli)
-    samples_bernoulli[n] = sample_bernoulli
-    # sample_ray = generate_rayleigh(param_rayleigh, n)
-    # samples_ray[n] = sample_ray
-    # print(sample_ray)
-    # (Опционально) Выводим информацию о выборке
-    print(f"Generated {n} samples for Bernoulli and Laplace distributions.")
+    samples_bernoulli[sample_size] = sample_bernoulli
+    print(f"Generated {sample_size} samples for Bernoulli and Laplace distributions.")
     plt.figure(figsize=(12, 6))
 
     plt.subplot(1, 2, 1)
     plt.hist(sample_bernoulli, bins='auto')
-    plt.title(f'Bernoulli distribution with {n} samples')
+    # plt.hist(sample_bernoulli, bins=30, density=True, alpha=0.6, color='b', label='Bernoulli Samples')
 
-    # plt.subplot(1, 2, 2)
-    # plt.hist(sample_ray, bins='auto')
-    # plt.title(f'Rayleigh distribution with {n} samples')
+    plt.title(f'Bernoulli Distribution (theta={theta_bernoulli}, sample_size={sample_size})')
+    laplace_sample = generate_laplace_sample(theta_laplace, sample_size)
+    plt.show()
+    plt.subplot(1, 2, 1)
+    plt.hist(laplace_sample, bins='auto')
+    # plt.hist(laplace_sample, bins=30, density=True, alpha=0.6, color='b', label='Laplace Samples')
 
+    plt.title(f'Laplace Distribution (theta={theta_laplace}, sample_size={sample_size})')
+    # plt.grid(True)
+
+    # Show the plot
     plt.show()
