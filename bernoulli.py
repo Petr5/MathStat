@@ -22,9 +22,9 @@ def generate_bernoulli(theta, size):
 sample_sizes = [5, 10, 100, 200, 400, 600, 800, 1000]
 samples_bernoulli = dict()
 samples_laplace = dict()
-theta_bernoulli = 0.8
-theta_laplace = 2.0  # The scale parameter of the Laplace distribution
-
+theta_bernoulli = 0.7
+theta_laplace = 8.5  # The scale parameter of the Laplace distribution
+mu_laplace = 10.5
 
 def generate_laplace_sample(theta_bernoulli, size):
     # Generate Laplace-distributed samples
@@ -93,19 +93,19 @@ for n in sample_sizes:
         print(f'D for Bernoulli(n={n}) and Laplace(m={m}): {D}')
 
 
-def bernoulli_pdf(x, sigma):
-    return x / sigma**2 * np.exp(-x**2 / (2 * sigma**2))
+def laplace_pdf(x, theta, mu):
+    return theta / 2 * np.exp(-theta * np.abs(x - mu))
 
 
-def laplace_pmf(k, p):
-    return -p**k / (k * np.log(1-p))
+def bernoulli_pmf(x, theta):
+    return theta ** x * (1 - theta) ** (1 - x)
 
 for n in sample_sizes:
     plt.figure(figsize=(12, 6))
     plt.hist(np.array(samples_laplace[n]), bins=np.arange(1, max(samples_laplace[n]) + 2) - 0.5, density=True, rwidth=0.8, align='mid', label='Histogram')
     k_vals = np.arange(1, max(samples_laplace[n]) + 1)
-    plt.plot(k_vals, [laplace_pmf(k, 0.5) for k in k_vals], 'o-', label='PMF')  # предполагаем, что p=0.5
-    plt.title(f'Laplace Distribution (n={n})')
+    plt.plot(k_vals, [bernoulli_pmf(k, theta_bernoulli) for k in k_vals], 'o-', label='PMF')  # предполагаем, что p=0.5
+    plt.title(f'Bernoulli Distribution (n={n})')
     plt.legend()
     plt.grid(True)
     plt.show()
@@ -113,8 +113,8 @@ for n in sample_sizes:
     plt.figure(figsize=(12, 6))
     plt.hist(samples_bernoulli[n], bins=30, density=True, label='Histogram', alpha=0.7)
     x_vals = np.linspace(0, max(samples_bernoulli[n]), 400)
-    plt.plot(x_vals, bernoulli_pdf(x_vals, 1), label='PDF')  # предполагаем, что sigma=1
-    plt.title(f'Bernoulli Distribution (n={n})')
+    plt.plot(x_vals, laplace_pdf(x_vals, theta_laplace, mu_laplace), label='PDF')  #
+    plt.title(f'Laplace Distribution (n={n})')
     plt.legend()
     plt.grid(True)
     plt.show()
